@@ -2,9 +2,9 @@ name: Build
 on:
   workflow_dispatch:
     inputs:
-      onnxruntime-version:
+      onnxruntime-ref:
         type: string
-        description: "ONNX Runtime version (e.g. 1.18.0); fallbacks to main branch"
+        description: "ONNX Runtime repository reference, e.g., 'v1.20.2' or 'main'"
         default: main
 env:
   GCC_VERSION: '11'
@@ -150,12 +150,12 @@ jobs:
           deno-version: v2.x
       - name: Run builder
         run:
-          deno run -A src/build.ts -v ${{ inputs.onnxruntime-version }} ${{ matrix.static && '-s' || '' }} ${{ matrix.args }}
+          deno run -A src/build.ts -r ${{ inputs.onnxruntime-ref }} ${{ matrix.static && '-s' || '' }} ${{ matrix.args }}
         # env:
         #  CUDNN_URL: ${{ matrix.cuda-version && (runner.os == 'Linux' && secrets.CUDNN9_2_CUDA12_LINUX_URL || secrets.CUDNN9_2_CUDA12_WINDOWS_URL) }}
         #  TENSORRT_URL: ${{ matrix.cuda-version && (runner.os == 'Linux' && secrets.TENSORRT10_0_CUDA12_LINUX_URL || secrets.TENSORRT10_0_CUDA12_WINDOWS_URL) }}
       - uses: actions/upload-artifact@v4
         with:
-          name: ortrs_${{ matrix.static && 'static' || 'dylib' }}${{ matrix.feature-set != 'none' && format('_{0}', matrix.feature-set) || '' }}-v${{ inputs.onnxruntime-version }}-${{ matrix.target }}
+          name: ort_${{ matrix.static && 'static' || 'dylib' }}${{ matrix.feature-set != 'none' && format('_{0}', matrix.feature-set) || '' }}-${{ inputs.onnxruntime-ref }}-${{ matrix.target }}
           path: artifact
           if-no-files-found: error

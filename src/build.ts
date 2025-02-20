@@ -15,7 +15,7 @@ await new Command()
 	.name('ort-artifact')
 	.version('0.1.0')
 	.type('target-arch', TARGET_ARCHITECTURE_TYPE)
-	.option('-v, --upstream-version <version:string>', 'Exact version of upstream package; defaults to main branch')
+	.option('-r, --reference', 'Exact branch or tag', { default: 'main' })
 	.option('-t, --training', 'Enable Training API')
 	.option('-s, --static', 'Build static library')
 	.option('--cuda', 'Enable CUDA EP')
@@ -33,8 +33,7 @@ await new Command()
 
 		const onnxruntimeRoot = join(root, 'onnxruntime');
 		if (!await exists(onnxruntimeRoot)) {
-			let branch = options.upstreamVersion === undefined || options.upstreamVersion === "main" ? "main" : `rel-${options.upstreamVersion}`;
-			await $`git clone https://github.com/microsoft/onnxruntime --recursive --single-branch --depth 1 --branch ${branch}`;
+			await $`git clone https://github.com/microsoft/onnxruntime --recursive --single-branch --depth 1 --branch ${options.branch}`;
 		}
 
 		$.cd(onnxruntimeRoot);
