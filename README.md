@@ -4,3 +4,4 @@ ToDo:
 - [ ] Add NPU-based execution providers (QNN?, Intel OpenVINO?, ...)
 - [ ] Remove unused setups? (training, Cuda, etc.)
 - [ ] Rename project?
+- [ ] Debug builds.
