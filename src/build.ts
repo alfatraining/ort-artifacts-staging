@@ -27,7 +27,7 @@ await new Command()
 	.option('--webgpu', 'Enable WebGPU EP')
 	.option('-A, --arch <arch:target-arch>', 'Configure target architecture for cross-compile', { default: 'x86_64' })
 	.option('-W, --wasm', 'Compile for WebAssembly (with patches)')
-	.option('--emsdk <version:string>', 'Emsdk version to use for WebAssembly build', { default: '3.1.59' })
+	.option('--emsdk <version:string>', 'Emsdk version to use for WebAssembly build', { default: '4.0.3' })
 	.action(async (options, ..._) => {
 		const root = Deno.cwd();
 
@@ -53,7 +53,7 @@ await new Command()
 
 		if (options.wasm) {
 			// there's no WAY im gonna try to wrestle with CMake on this one
-			await $`bash ./build.sh --config Release --build_wasm_static_lib --enable_wasm_simd --enable_wasm_threads --skip_tests --disable_wasm_exception_catching --disable_rtti --parallel --emsdk_version ${options.emsdk}`;
+			await $`bash ./build.sh --config Release --build_wasm_static_lib --enable_wasm_simd --enable_wasm_threads --skip_tests --disable_wasm_exception_catching --disable_rtti --parallel ${options.webgpu ? "--use_webgpu" : ''}--emsdk_version ${options.emsdk}`;
 
 			const buildRoot = join(onnxruntimeRoot, 'build', 'Linux', 'Release');
 
