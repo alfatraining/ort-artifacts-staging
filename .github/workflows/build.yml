@@ -150,7 +150,7 @@ jobs:
           deno-version: v2.x
       - name: Run builder
         run:
-          deno run -A src/build.ts -r=${{ inputs.onnxruntime-ref }} ${{ matrix.static && '-s' || '' }} ${{ matrix.args }}
+          deno run -A src/build.ts -r ${{ inputs.onnxruntime-ref }} ${{ matrix.static && '-s' || '' }} ${{ matrix.args }}
         # env:
         #  CUDNN_URL: ${{ matrix.cuda-version && (runner.os == 'Linux' && secrets.CUDNN9_2_CUDA12_LINUX_URL || secrets.CUDNN9_2_CUDA12_WINDOWS_URL) }}
         #  TENSORRT_URL: ${{ matrix.cuda-version && (runner.os == 'Linux' && secrets.TENSORRT10_0_CUDA12_LINUX_URL || secrets.TENSORRT10_0_CUDA12_WINDOWS_URL) }}
