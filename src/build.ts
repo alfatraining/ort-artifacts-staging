@@ -53,7 +53,7 @@ await new Command()
 
 		if (options.wasm) {
 			// there's no WAY im gonna try to wrestle with CMake on this one
-			await $`bash ./build.sh --config Release --build_wasm_static_lib --enable_wasm_simd --enable_wasm_threads --skip_tests --disable_wasm_exception_catching --disable_rtti --parallel ${options.webgpu ? "--use_webgpu" : ''}--emsdk_version ${options.emsdk}`;
+			await $`bash ./build.sh --config Release --build_wasm_static_lib --enable_wasm_simd --enable_wasm_threads --skip_tests --disable_wasm_exception_catching --disable_rtti --parallel ${options.webgpu ? "--use_webgpu" : ''} --emsdk_version ${options.emsdk}`;
 
 			const buildRoot = join(onnxruntimeRoot, 'build', 'Linux', 'Release');
 
