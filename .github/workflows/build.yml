@@ -69,18 +69,16 @@ jobs:
           #   static: true
           #   feature-set: train
           #   runs-on: windows-2022
-
-          # - target: aarch64-unknown-linux-gnu
-          #   args: "-A aarch64 --xnnpack --webgpu"
-          #   static: true
-          #   feature-set: none
-          #   runs-on: ubuntu-22.04
-          # - target: x86_64-unknown-linux-gnu
-          #   args: "--xnnpack --webgpu"
-          #   static: true
-          #   feature-set: none
-          #   runs-on: ubuntu-22.04
-
+          - target: aarch64-unknown-linux-gnu
+            args: "-A aarch64 --xnnpack --webgpu"
+            static: true
+            feature-set: none
+            runs-on: ubuntu-22.04
+          - target: x86_64-unknown-linux-gnu
+            args: "--xnnpack --webgpu"
+            static: true
+            feature-set: none
+            runs-on: ubuntu-22.04
           # - target: x86_64-unknown-linux-gnu
           #   args: "--cuda --trt --xnnpack"
           #   static: false
@@ -93,18 +91,16 @@ jobs:
           #   feature-set: rocm
           #   rocm: true
           #   runs-on: ubuntu-22.04
-
-          # - target: aarch64-apple-darwin
-          #   args: "--coreml -A aarch64 --xnnpack --webgpu"
-          #   static: true
-          #   feature-set: none
-          #   runs-on: macos-13
-          # - target: x86_64-apple-darwin
-          #   args: "--coreml --xnnpack --webgpu"
-          #   static: true
-          #   feature-set: none
-          #   runs-on: macos-13
-
+          - target: aarch64-apple-darwin
+            args: "--coreml -A aarch64 --xnnpack --webgpu"
+            static: true
+            feature-set: none
+            runs-on: macos-13
+          - target: x86_64-apple-darwin
+            args: "--coreml --xnnpack --webgpu"
+            static: true
+            feature-set: none
+            runs-on: macos-13
           # - target: x86_64-pc-windows-msvc
           #   args: "--directml --cuda --trt --xnnpack"
           #   static: false
@@ -116,18 +112,16 @@ jobs:
           #   static: true
           #   feature-set: none
           #   runs-on: windows-2022
-
           - target: x86_64-pc-windows-msvc
             args: "--directml --xnnpack --webgpu"
             static: true
             feature-set: none
             runs-on: windows-2025
-
-          # - target: wasm32-unknown-emscripten
-          #   args: "-W --webgpu"
-          #   static: true
-          #   feature-set: none
-          #   runs-on: ubuntu-22.04
+          - target: wasm32-unknown-emscripten
+            args: "-W --webgpu"
+            static: true
+            feature-set: none
+            runs-on: ubuntu-22.04
     steps:
       - name: Install cross-compile tools
         if: matrix.target == 'aarch64-unknown-linux-gnu'
