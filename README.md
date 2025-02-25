@@ -1,12 +1,12 @@
 ToDo:
-- [ ] Option to link against static or dynamic MSVC runtime on Windows.
 - [x] Fix WebGPU execution provider.
-- [ ] Optionally, compile WebGPU ep with Vulkan backend under Windows.
+- [ ] Option to link against static or dynamic MSVC runtime on Windows.
+- [ ] Option to compile WebGPU ep with Vulkan backend under Windows.
 - [ ] Add [`dxcompiler.dll`](https://github.com/alfatraining/ort-artifacts-staging/actions/runs/13452162958/job/37588407901#step:8:19204) and [`dxil.dll`](https://github.com/alfatraining/ort-artifacts-staging/actions/runs/13452162958/job/37588407901#step:8:19213) to the output archive for Windows builds with WebGPU ep.
-- [ ] Add NPU-based execution providers (QNN?, Intel OpenVINO?, ...)
-- [ ] Remove unused setups? (training, Cuda, etc.)
-- [ ] Rename project?
 - [ ] Debug builds.
 - [ ] Builds for Android.
 - [ ] Builds for iOS.
 - [ ] Custom CMake build of Emscripten.
+- [ ] Add NPU-based execution providers (QNN?, Intel OpenVINO?, ...)
+- [ ] Remove unused setups? (training, Cuda, etc.)
+- [ ] Rename project?
