@@ -1,5 +1,7 @@
 ToDo:
 - [x] Fix WebGPU execution provider.
+- [ ] Incorporate changes from <https://github.com/pykeio/ort-artifacts> since forking.
+- [ ] Build `onnxruntime` v1.21.
 - [ ] Option to link against static or dynamic MSVC runtime on Windows.
 - [ ] Option to compile WebGPU ep with Vulkan backend under Windows.
 - [ ] Add [`dxcompiler.dll`](https://github.com/alfatraining/ort-artifacts-staging/actions/runs/13452162958/job/37588407901#step:8:19204) and [`dxil.dll`](https://github.com/alfatraining/ort-artifacts-staging/actions/runs/13452162958/job/37588407901#step:8:19213) to the output archive for Windows builds with WebGPU ep.
