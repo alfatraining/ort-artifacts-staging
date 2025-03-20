@@ -17,7 +17,7 @@ await new Command()
 	.type('target-arch', TARGET_ARCHITECTURE_TYPE)
 	.option('-r, --reference <string>', 'Exact branch or tag')
 	.option('-t, --training', 'Enable Training API')
-	.option('-s, --static', 'Build static library')
+	.option('-mt', 'Link with static MSVC runtime')
 	.option('--cuda', 'Enable CUDA EP')
 	.option('--trt', 'Enable TensorRT EP', { depends: ['cuda'] })
 	.option('--directml', 'Enable DirectML EP')
@@ -28,7 +28,7 @@ await new Command()
 	.option('-N, --ninja', 'build with ninja')
 	.option('-A, --arch <arch:target-arch>', 'Configure target architecture for cross-compile', { default: 'x86_64' })
 	.option('-W, --wasm', 'Compile for WebAssembly (with patches)')
-	.option('--emsdk <version:string>', 'Emsdk version to use for WebAssembly build', { default: '4.0.4' })
+	.option('--emsdk <version:string>', 'Emsdk version to use for WebAssembly build', { default: '4.0.3' })
 	.action(async (options, ..._) => {
 		const root = Deno.cwd();
 
@@ -113,14 +113,12 @@ await new Command()
 			}
 		}
 
-		if (options.static) {
-			if (platform === 'win32') {
-				args.push('-DONNX_USE_MSVC_STATIC_RUNTIME=ON');
-				args.push('-Dprotobuf_MSVC_STATIC_RUNTIME=ON');
-				args.push('-Dgtest_force_shared_crt=OFF');
-				args.push('-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded');
-				args.push('-DABSL_MSVC_STATIC_RUNTIME=ON');
-			}
+		if (platform === 'win32') {
+			args.push(`-DONNX_USE_MSVC_STATIC_RUNTIME=${options.mt ? 'ON' : 'OFF'}`);
+			args.push(`-Dprotobuf_MSVC_STATIC_RUNTIME=${options.mt ? 'ON' : 'OFF'}`);
+			args.push(`-Dgtest_force_shared_crt=${options.mt ? 'OFF' : 'ON'}`);
+			args.push(`-DCMAKE_MSVC_RUNTIME_LIBRARY=${options.mt ? 'MultiThreaded' : 'MultiThreadedDLL'}`);
+			args.push(`-DABSL_MSVC_STATIC_RUNTIME=${options.mt ? 'ON' : 'OFF'}`);
 		}
 
 		// https://github.com/microsoft/onnxruntime/pull/21005
@@ -140,7 +138,7 @@ await new Command()
 			args.push('-G', 'Ninja');
 		}
 
-		const sourceDir = options.static ? join(root, 'src', 'static-build') : 'cmake';
+		const sourceDir = join(root, 'src', 'static-build');
 		const artifactOutDir = join(root, 'artifact', 'onnxruntime');
 
 		await $`cmake -S ${sourceDir} -B build -D CMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release -DCMAKE_INSTALL_PREFIX=${artifactOutDir} -DONNXRUNTIME_SOURCE_DIR=${onnxruntimeRoot} --compile-no-warning-as-error ${args}`;

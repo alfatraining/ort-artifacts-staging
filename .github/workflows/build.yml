@@ -4,7 +4,7 @@ on:
     inputs:
       onnxruntime-ref:
         type: string
-        description: "ONNX Runtime repository reference, e.g., 'v1.21' or 'main'"
+        description: "ONNX Runtime repository reference, e.g., 'rel-1.21.0' or 'main'"
         default: main
 env:
   GCC_VERSION: '11'
@@ -12,7 +12,7 @@ env:
   PYTHON_VERSION: '3.10'
   NODE_VERSION: '18'
   XCODE_VERSION: '14.3.1'
-  MACOSX_DEPLOYMENT_TARGET: '10.15' # Should be 13.3 according to https://github.com/microsoft/onnxruntime/releases/tag/v1.21.0.
+  MACOSX_DEPLOYMENT_TARGET: '11.0' # Should be 13.3 according to https://github.com/microsoft/onnxruntime/releases/tag/v1.21.0.
 jobs:
   build:
     name: Build
@@ -23,38 +23,24 @@ jobs:
         include:
           - target: aarch64-unknown-linux-gnu
             args: "-A aarch64 --xnnpack --webgpu -N"
-            static: true
-            feature-set: none
             runs-on: ubuntu-22.04
           - target: x86_64-unknown-linux-gnu
             args: "--xnnpack --webgpu -N"
-            static: true
-            feature-set: none
             runs-on: ubuntu-22.04
           - target: aarch64-apple-darwin
-            args: "--coreml -A aarch64 --xnnpack --webgpu -N"
-            static: true
-            feature-set: none
+            args: "-A aarch64 --coreml --xnnpack --webgpu -N"
             runs-on: macos-13
           - target: x86_64-apple-darwin
             args: "--coreml --xnnpack --webgpu -N"
-            static: true
-            feature-set: none
             runs-on: macos-13
-          - target: x86_64-pc-windows-msvc
+          - target: x86_64-pc-windows-msvc-md
             args: "--directml --xnnpack --webgpu"
-            static: true
-            feature-set: none
             runs-on: windows-2025
-          - target: x86_64-pc-windows-msvc
-            args: "--directml --xnnpack --webgpu"
-            static: false
-            feature-set: none
+          - target: x86_64-pc-windows-msvc-mt
+            args: "-mt --directml --xnnpack --webgpu"
             runs-on: windows-2025
           - target: wasm32-unknown-emscripten
             args: "-W --webgpu"
-            static: true
-            feature-set: none
             runs-on: ubuntu-22.04
     steps:
       - name: Install cross-compile tools
@@ -75,9 +61,9 @@ jobs:
           deno-version: v2.x
       - name: Run builder
         run:
-          deno run -A src/build.ts -r ${{ inputs.onnxruntime-ref }} ${{ matrix.static && '-s' || '' }} ${{ matrix.args }}
+          deno run -A src/build.ts -r ${{ inputs.onnxruntime-ref }} ${{ matrix.args }}
       - uses: actions/upload-artifact@v4
         with:
-          name: ort_${{ matrix.static && 'static' || 'dylib' }}${{ matrix.feature-set != 'none' && format('_{0}', matrix.feature-set) || '' }}-${{ inputs.onnxruntime-ref }}-${{ matrix.target }}
+          name: ort-${{ inputs.onnxruntime-ref }}-${{ matrix.target }}
           path: artifact
           if-no-files-found: error
