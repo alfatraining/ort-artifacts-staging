@@ -16,14 +16,10 @@ await new Command()
 	.version('0.1.0')
 	.type('target-arch', TARGET_ARCHITECTURE_TYPE)
 	.option('-r, --reference <string>', 'Exact branch or tag')
-	.option('-t, --training', 'Enable Training API')
 	.option('--mt', 'Link with static MSVC runtime')
-	.option('--cuda', 'Enable CUDA EP')
-	.option('--trt', 'Enable TensorRT EP', { depends: ['cuda'] })
 	.option('--directml', 'Enable DirectML EP')
 	.option('--coreml', 'Enable CoreML EP')
 	.option('--xnnpack', 'Enable XNNPACK EP')
-	.option('--rocm', 'Enable ROCm EP')
 	.option('--webgpu', 'Enable WebGPU EP')
 	.option('-N, --ninja', 'build with ninja')
 	.option('-A, --arch <arch:target-arch>', 'Configure target architecture for cross-compile', { default: 'x86_64' })
@@ -78,18 +74,14 @@ await new Command()
 		if (platform === 'darwin' && options.coreml) {
 			args.push('-Donnxruntime_USE_COREML=ON');
 		}
-		if (platform === 'linux' && options.rocm) {
-			args.push('-Donnxruntime_USE_ROCM=ON');
-			args.push('-Donnxruntime_ROCM_HOME=/opt/rocm');
-		}
 		if (options.xnnpack) {
 			args.push('-Donnxruntime_USE_XNNPACK=ON');
 		}
 		if (options.webgpu) {
 			args.push('-Donnxruntime_USE_WEBGPU=ON');
 			args.push('-Donnxruntime_ENABLE_DELAY_LOADING_WIN_DLLS=OFF');
-			args.push('-Donnxruntime_USE_EXTERNAL_DAWN=OFF');
-			args.push('-Donnxruntime_BUILD_DAWN_MONOLITHIC_LIBRARY=ON');
+			// args.push('-Donnxruntime_USE_EXTERNAL_DAWN=OFF');
+			// args.push('-Donnxruntime_BUILD_DAWN_MONOLITHIC_LIBRARY=ON');
 		}
 
 		if (platform === 'darwin') {
