@@ -37,7 +37,7 @@ jobs:
             args: "--directml --xnnpack --webgpu"
             runs-on: windows-2025
           - target: x86_64-pc-windows-msvc-mt
-            args: "-mt --directml --xnnpack --webgpu"
+            args: "--mt --directml --xnnpack --webgpu"
             runs-on: windows-2025
           - target: wasm32-unknown-emscripten
             args: "-W --webgpu"
