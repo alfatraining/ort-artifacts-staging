@@ -173,8 +173,8 @@ endif()
 if(onnxruntime_USE_WEBGPU)
     # both of these are required for some reason, LIBRARY RUNTIME doesn't work and it still copies to /bin, but at least it
     # *also* copies to /lib with this
-    install(TARGETS webgpu_dawn LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    install(IMPORTED_RUNTIME_ARTIFACTS webgpu_dawn DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    # install(TARGETS webgpu_dawn LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    # install(IMPORTED_RUNTIME_ARTIFACTS webgpu_dawn DESTINATION ${CMAKE_INSTALL_LIBDIR})
     if(WIN32)
         install(FILES "$<TARGET_FILE_DIR:dxcompiler>/dxil.dll" "$<TARGET_FILE_DIR:dxcompiler>/dxcompiler.dll" TYPE LIB)
     endif()
