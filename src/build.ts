@@ -66,61 +66,11 @@ await new Command()
 
 			await Deno.copyFile(join(buildRoot, 'libonnxruntime_webassembly.a'), join(artifactLibDir, 'libonnxruntime.a'));
 
-			return;
+			return; // Early return.
 		}
 
 		const compilerFlags = [];
 		const args = [];
-		if (options.cuda) {
-			args.push('-Donnxruntime_USE_CUDA=ON');
-			// https://github.com/microsoft/onnxruntime/pull/20768
-			args.push('-Donnxruntime_NVCC_THREADS=1');
-			if (options.trt) {
-				args.push('-Donnxruntime_USE_TENSORRT=ON');
-				args.push('-Donnxruntime_USE_TENSORRT_BUILTIN_PARSER=ON');
-			}
-
-			switch (platform) {
-				case 'linux': {
-					const cudnnArchiveStream = await fetch(Deno.env.get('CUDNN_URL')!).then(c => c.body!);
-					const cudnnOutPath = join(root, 'cudnn');
-					await Deno.mkdir(cudnnOutPath);
-					await $`tar xvJC ${cudnnOutPath} --strip-components=1 -f -`.stdin(cudnnArchiveStream);
-					args.push(`-Donnxruntime_CUDNN_HOME=${cudnnOutPath}`);
-
-					if (options.trt) {
-						const trtArchiveStream = await fetch(Deno.env.get('TENSORRT_URL')!).then(c => c.body!);
-						const trtOutPath = join(root, 'tensorrt');
-						await Deno.mkdir(trtOutPath);
-						await $`tar xvzC ${trtOutPath} --strip-components=1 -f -`.stdin(trtArchiveStream);
-						args.push(`-Donnxruntime_TENSORRT_HOME=${trtOutPath}`);
-					}
-
-					break;
-				}
-				case 'win32': {
-					// nvcc < 12.4 throws an error with VS 17.10
-					args.push('-DCMAKE_CUDA_FLAGS_INIT=-allow-unsupported-compiler');
-
-					// windows should ship with bsdtar which supports extracting .zips
-					const cudnnArchiveStream = await fetch(Deno.env.get('CUDNN_URL')!).then(c => c.body!);
-					const cudnnOutPath = join(root, 'cudnn');
-					await Deno.mkdir(cudnnOutPath);
-					await $`tar xvC ${cudnnOutPath} --strip-components=1 -f -`.stdin(cudnnArchiveStream);
-					args.push(`-Donnxruntime_CUDNN_HOME=${cudnnOutPath}`);
-
-					if (options.trt) {
-						const trtArchiveStream = await fetch(Deno.env.get('TENSORRT_URL')!).then(c => c.body!);
-						const trtOutPath = join(root, 'tensorrt');
-						await Deno.mkdir(trtOutPath);
-						await $`tar xvC ${trtOutPath} --strip-components=1 -f -`.stdin(trtArchiveStream);
-						args.push(`-Donnxruntime_TENSORRT_HOME=${trtOutPath}`);
-					}
-
-					break;
-				}
-			}
-		}
 
 		if (platform === 'win32' && options.directml) {
 			args.push('-Donnxruntime_USE_DML=ON');
@@ -142,62 +92,26 @@ await new Command()
 			args.push('-Donnxruntime_BUILD_DAWN_MONOLITHIC_LIBRARY=ON');
 		}
 
-		if (!options.wasm) {
-			if (platform === 'darwin') {
-				if (options.arch === 'aarch64') {
-					args.push('-DCMAKE_OSX_ARCHITECTURES=arm64');
-				} else {
-					args.push('-DCMAKE_OSX_ARCHITECTURES=x86_64');
-				}
+		if (platform === 'darwin') {
+			if (options.arch === 'aarch64') {
+				args.push('-DCMAKE_OSX_ARCHITECTURES=arm64');
 			} else {
-				if (options.arch === 'aarch64' && arch !== 'arm64') {
-					args.push('-Donnxruntime_CROSS_COMPILING=ON');
-					switch (platform) {
-						case 'win32':
-							args.push('-A', 'ARM64');
-							compilerFlags.push('_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS');
-							break;
-						case 'linux':
-							args.push(`-DCMAKE_TOOLCHAIN_FILE=${join(root, 'toolchains', 'aarch64-unknown-linux-gnu.cmake')}`);
-							break;
-					}
+				args.push('-DCMAKE_OSX_ARCHITECTURES=x86_64');
+			}
+		} else {
+			if (options.arch === 'aarch64' && arch !== 'arm64') {
+				args.push('-Donnxruntime_CROSS_COMPILING=ON');
+				switch (platform) {
+					case 'win32':
+						args.push('-A', 'ARM64');
+						compilerFlags.push('_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS');
+						break;
+					case 'linux':
+						args.push(`-DCMAKE_TOOLCHAIN_FILE=${join(root, 'toolchains', 'aarch64-unknown-linux-gnu.cmake')}`);
+						break;
 				}
 			}
 		}
-
-		if (options.training) {
-			args.push('-Donnxruntime_ENABLE_TRAINING=ON');
-			args.push('-Donnxruntime_ENABLE_LAZY_TENSOR=OFF');
-		}
-
-		if (options.training || options.rocm) {
-			args.push('-Donnxruntime_DISABLE_RTTI=OFF');
-		}
-
-		// Already defined below.
-		// if (platform === 'win32' && !options.static) {
-		// 	args.push('-DONNX_USE_MSVC_STATIC_RUNTIME=OFF');
-		// 	args.push('-Dprotobuf_MSVC_STATIC_RUNTIME=OFF');
-		// 	args.push('-Dgtest_force_shared_crt=OFF');
-		// }
-
-		// if (!options.static) {
-		// 	// actually, with CUDA & TensorRT, we could statically link the onnxruntime core (just not the EPs)
-		// 	// ... could be the move (just needs the below fix for windows)
-		// 	// 	if (platform === 'win32') {
-		// 	// 		args.push('-DONNX_USE_MSVC_STATIC_RUNTIME=OFF');
-		// 	// 		args.push('-Dprotobuf_MSVC_STATIC_RUNTIME=OFF');
-		// 	// 		args.push('-Dgtest_force_shared_crt=ON');
-		// 	// 	}
-		// 	args.push('-Donnxruntime_BUILD_SHARED_LIB=ON');
-		// } else {
-		// 	if (platform === 'win32') {
-		// 		args.push('-DONNX_USE_MSVC_STATIC_RUNTIME=ON');
-		// 		args.push('-Dprotobuf_MSVC_STATIC_RUNTIME=ON');
-		// 		args.push('-Dgtest_force_shared_crt=OFF');
-		// 		args.push('-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded');
-		// 	}
-		// }
 
 		if (options.static) {
 			if (platform === 'win32') {
@@ -227,9 +141,7 @@ await new Command()
 		}
 
 		const sourceDir = options.static ? join(root, 'src', 'static-build') : 'cmake';
-		const buildDir = join(onnxruntimeRoot, 'build');
 		const artifactOutDir = join(root, 'artifact', 'onnxruntime');
-
 
 		await $`cmake -S ${sourceDir} -B build -D CMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release -DCMAKE_INSTALL_PREFIX=${artifactOutDir} -DONNXRUNTIME_SOURCE_DIR=${onnxruntimeRoot} --compile-no-warning-as-error ${args}`;
 		await $`cmake --build build --config Release --parallel ${cpus().length}`;
