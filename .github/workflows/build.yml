@@ -11,8 +11,8 @@ env:
   CMAKE_VERSION: '3.28'
   PYTHON_VERSION: '3.10'
   NODE_VERSION: '18'
-  XCODE_VERSION: '14.3'
-  MACOSX_DEPLOYMENT_TARGET: '10.15'
+  XCODE_VERSION: '14.3.1'
+  MACOSX_DEPLOYMENT_TARGET: '10.15' # Should be 13.3 according to https://github.com/microsoft/onnxruntime/releases/tag/v1.21.0.
 jobs:
   build:
     name: Build
@@ -70,12 +70,12 @@ jobs:
           #   feature-set: train
           #   runs-on: windows-2022
           - target: aarch64-unknown-linux-gnu
-            args: "-A aarch64 --xnnpack --webgpu"
+            args: "-A aarch64 --xnnpack --webgpu -N"
             static: true
             feature-set: none
             runs-on: ubuntu-22.04
           - target: x86_64-unknown-linux-gnu
-            args: "--xnnpack --webgpu"
+            args: "--xnnpack --webgpu -N"
             static: true
             feature-set: none
             runs-on: ubuntu-22.04
@@ -92,12 +92,12 @@ jobs:
           #   rocm: true
           #   runs-on: ubuntu-22.04
           - target: aarch64-apple-darwin
-            args: "--coreml -A aarch64 --xnnpack --webgpu"
+            args: "--coreml -A aarch64 --xnnpack --webgpu -N"
             static: true
             feature-set: none
             runs-on: macos-13
           - target: x86_64-apple-darwin
-            args: "--coreml --xnnpack --webgpu"
+            args: "--coreml --xnnpack --webgpu -N"
             static: true
             feature-set: none
             runs-on: macos-13
@@ -135,16 +135,17 @@ jobs:
           sudo rm -rf /opt/hostedtoolcache/CodeQL
           sudo docker image prune --all --force
       - uses: actions/checkout@v4
-      - uses: pykeio/cuda-toolkit@v0.2.18
-        if: matrix.cuda-version && runner.os != 'macOS'
-        with:
-          cuda: ${{ matrix.cuda-version }}
-      - name: Install ROCm
-        if: matrix.rocm && runner.os == 'Linux'
-        run: |
-          wget https://repo.radeon.com/amdgpu-install/6.1.1/ubuntu/jammy/amdgpu-install_6.1.60101-1_all.deb
-          sudo apt install ./amdgpu-install_6.1.60101-1_all.deb -y
-          DEBIAN_FRONTEND=noninteractive amdgpu-install --accept-eula -y --usecase=rocm,hiplibsdk --no-dkms
+      - uses: seanmiddleditch/gha-setup-ninja@v6
+      #- uses: pykeio/cuda-toolkit@v0.2.18
+      #  if: matrix.cuda-version && runner.os != 'macOS'
+      #  with:
+      #    cuda: ${{ matrix.cuda-version }}
+      # - name: Install ROCm
+      #  if: matrix.rocm && runner.os == 'Linux'
+      #  run: |
+      #    wget https://repo.radeon.com/amdgpu-install/6.1.1/ubuntu/jammy/amdgpu-install_6.1.60101-1_all.deb
+      #    sudo apt install ./amdgpu-install_6.1.60101-1_all.deb -y
+      #    DEBIAN_FRONTEND=noninteractive amdgpu-install --accept-eula -y --usecase=rocm,hiplibsdk --no-dkms
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x

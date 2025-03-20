@@ -1,11 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(onnxruntime_static_lib)
 
-# Revert: https://github.com/pykeio/ort-artifacts-staging/commit/59a6e9be80558b6988996e678c99785c783edf49#diff-6c4b1e1d2d8ac0dfe876c5cff2b2e7748429ebcb342b1d2509faed649f356f2b
-set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
-set(ONNX_USE_MSVC_STATIC_RUNTIME ON)
-set(protobuf_MSVC_STATIC_RUNTIME ON)
-set(onnxruntime_BUILD_SHARED_LIB ON) # Does not even start to compile without this.
+set(onnxruntime_BUILD_SHARED_LIB ON)
 
 add_definitions(-D_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS)
 
@@ -154,13 +150,38 @@ function(bundle_static_library bundled_target_name)
 endfunction()
 bundle_static_library(${PROJECT_NAME} onnxruntime)
 
-install(
-    FILES
-    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_c_api.h
-    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_api.h
-    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_inline.h
-    TYPE INCLUDE
-)
+if(onnxruntime_USE_CUDA)
+    add_dependencies(onnxruntime onnxruntime_providers_cuda)
+    install(IMPORTED_RUNTIME_ARTIFACTS onnxruntime_providers_shared DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(IMPORTED_RUNTIME_ARTIFACTS onnxruntime_providers_cuda DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
+if(onnxruntime_USE_TENSORRT)
+    add_dependencies(onnxruntime onnxruntime_providers_tensorrt)
+    install(IMPORTED_RUNTIME_ARTIFACTS onnxruntime_providers_shared DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(IMPORTED_RUNTIME_ARTIFACTS onnxruntime_providers_tensorrt DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
+if(onnxruntime_USE_DNNL)
+    add_dependencies(onnxruntime onnxruntime_providers_dnnl)
+    install(IMPORTED_RUNTIME_ARTIFACTS onnxruntime_providers_shared DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(IMPORTED_RUNTIME_ARTIFACTS onnxruntime_providers_dnnl DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
+if(onnxruntime_USE_ROCM)
+    add_dependencies(onnxruntime onnxruntime_providers_rocm)
+    install(IMPORTED_RUNTIME_ARTIFACTS onnxruntime_providers_shared DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(IMPORTED_RUNTIME_ARTIFACTS onnxruntime_providers_rocm DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
+if(onnxruntime_USE_WEBGPU)
+    # both of these are required for some reason, LIBRARY RUNTIME doesn't work and it still copies to /bin, but at least it
+    # *also* copies to /lib with this
+    install(TARGETS webgpu_dawn LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(IMPORTED_RUNTIME_ARTIFACTS webgpu_dawn DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    if(WIN32)
+        install(FILES "$<TARGET_FILE_DIR:dxcompiler>/dxil.dll" "$<TARGET_FILE_DIR:dxcompiler>/dxcompiler.dll" TYPE LIB)
+    endif()
+endif()
+# if(onnxruntime_USE_DML)
+#     install(FILES "$<TARGET_FILE_DIR:onnxruntime_providers_dml>/DirectML.dll" TYPE LIB) # In my experience, if the DirectML.dll does not match the system, the whole application can segfault. Thus, I would rather rely on the potentially outdated DirectML.dll of the system.
+# endif()
 
 install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${PROJECT_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}
