@@ -57,6 +57,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: seanmiddleditch/gha-setup-ninja@v6
       - uses: abrown/install-openvino-action@v9
+        with:
+          version: "2024.5"
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
