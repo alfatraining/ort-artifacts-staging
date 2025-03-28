@@ -182,6 +182,14 @@ endif()
 if(onnxruntime_USE_DML)
     install(FILES "$<TARGET_FILE_DIR:onnxruntime_providers_dml>/DirectML.dll" TYPE LIB)
 endif()
+if(onnxruntime_USE_OPENVINO)
+    if(WIN32)
+        install(FILES "$<TARGET_FILE_DIR:onnxruntime_providers_openvino>/onnxruntime_providers_openvino.dll" TYPE LIB)
+    else(APPLE)
+        install(FILES "$<TARGET_FILE_DIR:onnxruntime_providers_openvino>/libonnxruntime_providers_openvino.dylib" TYPE LIB)
+    endif()
+        install(FILES "$<TARGET_FILE_DIR:onnxruntime_providers_openvino>/libonnxruntime_providers_openvino.so" TYPE LIB)
+endif()
 
 install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${PROJECT_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}

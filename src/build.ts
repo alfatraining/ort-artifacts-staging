@@ -89,6 +89,7 @@ await new Command()
 			args.push('-Donnxruntime_USE_OPENVINO_GPU=ON');
 			args.push('-Donnxruntime_USE_OPENVINO_CPU=ON');
 			args.push('-Donnxruntime_USE_OPENVINO_NPU=ON');
+			args.push('-Donnxruntime_BUILD_SHARED_LIB'); // TODO: Seems to be required: https://onnxruntime.ai/docs/build/eps.html#execution-provider-shared-libraries
 		}
 
 		if (platform === 'darwin') {
