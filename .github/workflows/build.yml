@@ -12,7 +12,7 @@ env:
   PYTHON_VERSION: '3.10'
   NODE_VERSION: '18'
   XCODE_VERSION: '14.3.1'
-  MACOSX_DEPLOYMENT_TARGET: '11.0' # Should be 13.3 according to https://github.com/microsoft/onnxruntime/releases/tag/v1.21.0.
+  MACOSX_DEPLOYMENT_TARGET: '13.0' # Should be 13.3 according to https://github.com/microsoft/onnxruntime/releases/tag/v1.21.0.
 jobs:
   build:
     name: Build
@@ -24,24 +24,31 @@ jobs:
           - target: aarch64-unknown-linux-gnu
             args: "-A aarch64 --xnnpack --webgpu --openvino -N"
             runs-on: ubuntu-22.04
+            arch: "arm64" # Defined again for OpenVINO setup.
           - target: x86_64-unknown-linux-gnu
             args: "--xnnpack --webgpu --openvino -N"
             runs-on: ubuntu-22.04
+            arch: "x86_64"
           - target: aarch64-apple-darwin
             args: "-A aarch64 --coreml --xnnpack --webgpu --openvino -N"
             runs-on: macos-13
+            arch: "arm64"
           - target: x86_64-apple-darwin
             args: "--coreml --xnnpack --webgpu --openvino -N"
             runs-on: macos-13
+            arch: "x86_64"
           - target: x86_64-pc-windows-msvc-md
             args: "--directml --xnnpack --webgpu --openvino"
             runs-on: windows-2025
+            arch: "x86_64"
           - target: x86_64-pc-windows-msvc-mt
             args: "--mt --directml --xnnpack --webgpu --openvino"
             runs-on: windows-2025
+            arch: "x86_64"
           - target: wasm32-unknown-emscripten
             args: "-W --webgpu"
             runs-on: ubuntu-22.04
+            arch: "wasm32"
     steps:
       - name: Install cross-compile tools
         if: matrix.target == 'aarch64-unknown-linux-gnu'
@@ -57,8 +64,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: seanmiddleditch/gha-setup-ninja@v6
       - uses: abrown/install-openvino-action@v9
+        if: matrix.arch == 'x86_64' || matrix.arch == 'arm64'
         with:
           version: "2024.5"
+          arch: "{{ matrix.arch }}"
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
