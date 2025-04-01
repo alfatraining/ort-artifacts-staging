@@ -89,7 +89,8 @@ await new Command()
 			args.push('-Donnxruntime_USE_OPENVINO_GPU=ON');
 			args.push('-Donnxruntime_USE_OPENVINO_CPU=ON');
 			args.push('-Donnxruntime_USE_OPENVINO_NPU=ON');
-			args.push('-Donnxruntime_USE_OPENVINO_INTERFACE=ON');
+			args.push('-Donnxruntime_DISABLE_RTTI=OFF');
+			// args.push('-Donnxruntime_USE_OPENVINO_INTERFACE=ON'); <- Not sure what this does.
 		}
 
 		if (platform === 'darwin') {
