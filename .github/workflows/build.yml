@@ -25,6 +25,7 @@ jobs:
             args: "-A aarch64 --xnnpack --webgpu --openvino -N"
             runs-on: ubuntu-22.04
             arch: "arm64" # Defined again for OpenVINO setup.
+            release: "ubuntu20" # Defined for OpenVINO setup.
           - target: x86_64-unknown-linux-gnu
             args: "--xnnpack --webgpu --openvino -N"
             runs-on: ubuntu-22.04
@@ -68,6 +69,7 @@ jobs:
         with:
           version: "2024.5"
           arch: ${{ matrix.arch }}
+          release: ${{ matrix.release }}
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
