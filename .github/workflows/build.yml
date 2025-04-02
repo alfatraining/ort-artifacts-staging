@@ -31,11 +31,11 @@ jobs:
             runs-on: ubuntu-22.04
             arch: "x86_64"
           - target: aarch64-apple-darwin
-            args: "-A aarch64 --coreml --xnnpack --webgpu --openvino -N"
+            args: "-A aarch64 --coreml --xnnpack --webgpu -N"
             runs-on: macos-13
             arch: "arm64"
           - target: x86_64-apple-darwin
-            args: "--coreml --xnnpack --webgpu --openvino -N"
+            args: "--coreml --xnnpack --webgpu -N"
             runs-on: macos-13
             arch: "x86_64"
           - target: x86_64-pc-windows-msvc-md

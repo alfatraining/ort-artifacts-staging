@@ -84,7 +84,8 @@ await new Command()
 			// args.push('-Donnxruntime_USE_EXTERNAL_DAWN=OFF');
 			// args.push('-Donnxruntime_BUILD_DAWN_MONOLITHIC_LIBRARY=ON');
 		}
-		if ((platform === 'win32' || platform === 'darwin' || platform === 'linux') && options.openvino) {
+		if ((platform === 'win32' || platform === 'linux') && options.openvino) {
+			// OpenVINO probably not available on macOS: https://github.com/microsoft/onnxruntime/issues/24273
 			args.push('-Donnxruntime_USE_OPENVINO=ON');
 			args.push('-Donnxruntime_USE_OPENVINO_GPU=ON');
 			args.push('-Donnxruntime_USE_OPENVINO_CPU=ON');
