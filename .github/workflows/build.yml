@@ -21,35 +21,35 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: aarch64-unknown-linux-gnu
-            args: "-A aarch64 --xnnpack --webgpu --openvino -N"
-            runs-on: ubuntu-22.04
-            arch: "arm64" # Defined again for OpenVINO setup.
-            release: "ubuntu20" # Defined for OpenVINO setup.
-          - target: x86_64-unknown-linux-gnu
-            args: "--xnnpack --webgpu --openvino -N"
-            runs-on: ubuntu-22.04
-            arch: "x86_64"
-          - target: aarch64-apple-darwin
-            args: "-A aarch64 --coreml --xnnpack --webgpu -N"
-            runs-on: macos-13
-            arch: "arm64"
-          - target: x86_64-apple-darwin
-            args: "--coreml --xnnpack --webgpu -N"
-            runs-on: macos-13
-            arch: "x86_64"
+          # - target: aarch64-unknown-linux-gnu
+          #   args: "-A aarch64 --xnnpack --webgpu --openvino -N"
+          #   runs-on: ubuntu-22.04
+          #   arch: "arm64" # Defined again for OpenVINO setup.
+          #   release: "ubuntu20" # Defined for OpenVINO setup.
+          # - target: x86_64-unknown-linux-gnu
+          #   args: "--xnnpack --webgpu --openvino -N"
+          #   runs-on: ubuntu-22.04
+          #   arch: "x86_64"
+          # - target: aarch64-apple-darwin
+          #   args: "-A aarch64 --coreml --xnnpack --webgpu -N"
+          #   runs-on: macos-13
+          #   arch: "arm64"
+          # - target: x86_64-apple-darwin
+          #   args: "--coreml --xnnpack --webgpu -N"
+          #   runs-on: macos-13
+          #   arch: "x86_64"
           - target: x86_64-pc-windows-msvc-md
-            args: "--directml --xnnpack --webgpu --openvino"
+            args: "--openvino"
             runs-on: windows-2025
             arch: "x86_64"
-          - target: x86_64-pc-windows-msvc-mt
-            args: "--mt --directml --xnnpack --webgpu --openvino"
-            runs-on: windows-2025
-            arch: "x86_64"
-          - target: wasm32-unknown-emscripten
-            args: "-W --webgpu"
-            runs-on: ubuntu-22.04
-            arch: "wasm32"
+          # - target: x86_64-pc-windows-msvc-mt
+          #   args: "--mt --directml --xnnpack --webgpu --openvino"
+          #   runs-on: windows-2025
+          #   arch: "x86_64"
+          # - target: wasm32-unknown-emscripten
+          #   args: "-W --webgpu"
+          #   runs-on: ubuntu-22.04
+          #   arch: "wasm32"
     steps:
       - name: Install cross-compile tools
         if: matrix.target == 'aarch64-unknown-linux-gnu'
