@@ -22,20 +22,20 @@ jobs:
       matrix:
         include:
           - target: aarch64-unknown-linux-gnu
-            args: "-A aarch64 --xnnpack --webgpu -N"
+            args: "-A aarch64 --xnnpack -N"
             runs-on: ubuntu-22.04
             arch: "arm64" # Defined again for OpenVINO setup.
             release: "ubuntu20" # Defined for OpenVINO setup.
           - target: x86_64-unknown-linux-gnu
-            args: "--xnnpack --webgpu -N"
+            args: "--xnnpack -N"
             runs-on: ubuntu-22.04
             arch: "x86_64"
           - target: aarch64-apple-darwin
-            args: "-A aarch64 --xnnpack --webgpu -N" # CoreML requires macOS 13 or newer.
+            args: "-A aarch64 --xnnpack -N" # CoreML requires macOS 13 or newer.
             runs-on: macos-13
             arch: "arm64"
           - target: x86_64-apple-darwin
-            args: "--xnnpack --webgpu -N" # CoreML requires macOS 13 or newer.
+            args: "--xnnpack -N" # CoreML requires macOS 13 or newer.
             runs-on: macos-13
             arch: "x86_64"
           - target: x86_64-pc-windows-msvc-md
