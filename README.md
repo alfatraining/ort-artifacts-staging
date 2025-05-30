@@ -10,4 +10,4 @@ ToDo:
 - Option to compile WebGPU ep with Vulkan backend under Windows?
 
 Changes from [pykeio/ort-artifacts](https://github.com/pykeio/ort-artifacts) should be reviewed and merged into this fork.
-Currently, the latest commit until reviewed was [2793c2e](https://github.com/alfatraining/ort-artifacts-staging/tree/2793c2e33712de2f5c19435af438c95ceada8085).
+Currently, the latest commit until reviewed was [2793c2e](https://github.com/pykeio/ort-artifacts/tree/2793c2e33712de2f5c19435af438c95ceada8085).

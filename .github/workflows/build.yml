@@ -4,7 +4,7 @@ on:
     inputs:
       onnxruntime-ref:
         type: string
-        description: "ONNX Runtime repository reference, e.g., 'rel-1.21.1' or 'main'"
+        description: "ONNX Runtime repository reference, e.g., 'rel-1.22' or 'main'"
         default: main
 env:
   GCC_VERSION: '11'
