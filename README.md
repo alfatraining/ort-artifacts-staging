@@ -2,6 +2,7 @@ Static builds of [onnxruntime](https://github.com/microsoft/onnxruntime) for var
 
 ToDo:
 - Debug builds.
+- KleidiAI?
 - Builds for Android.
 - Builds for iOS.
 - Custom CMake build of Emscripten.
