@@ -129,6 +129,7 @@ await new Command()
 		}
 
 		args.push('-Donnxruntime_BUILD_UNIT_TESTS=OFF');
+		args.push('-Donnxruntime_USE_KLEIDIAI=ON');
 
 		if (compilerFlags.length > 0) {
 			const allFlags = compilerFlags.map(def => `-D${def}`).join(' ');
