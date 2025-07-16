@@ -131,11 +131,6 @@ await new Command()
 		args.push('-Donnxruntime_BUILD_UNIT_TESTS=OFF');
 		args.push('-Donnxruntime_USE_KLEIDIAI=ON');
 
-		// Hide internal symbols, i.e., to protobuf, to the outside.
-		args.push('-DCMAKE_CXX_VISIBILITY_PRESET=hidden');
-		args.push('-DCMAKE_C_VISIBILITY_PRESET=hidden');
-		args.push('-DCMAKE_VISIBILITY_INLINES_HIDDEN=ON');
-
 		if (compilerFlags.length > 0) {
 			const allFlags = compilerFlags.map(def => `-D${def}`).join(' ');
 			args.push(`-DCMAKE_C_FLAGS=${allFlags}`);
