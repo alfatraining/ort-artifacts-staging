@@ -77,7 +77,7 @@ jobs:
             arch: "wasm32"
     steps:
       - name: Install cross-compile tools
-        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        if: matrix.target == 'dylib-aarch64-unknown-linux-gnu' || matrix.target == 'static-aarch64-unknown-linux-gnu'
         run: |
           sudo apt update && sudo apt install -y gcc make gcc-11-aarch64-linux-gnu g++-11-aarch64-linux-gnu binutils-aarch64-linux-gnu
       - name: Remove unnecessary software
