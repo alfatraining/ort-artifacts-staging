@@ -16,6 +16,7 @@ await new Command()
 	.version('0.1.0')
 	.type('target-arch', TARGET_ARCHITECTURE_TYPE)
 	.option('-r, --reference <string>', 'Exact branch or tag')
+	.option('-s, --static', 'Build static library')
 	.option('--mt', 'Link with static MSVC runtime')
 	.option('--directml', 'Enable DirectML EP')
 	.option('--coreml', 'Enable CoreML EP')
@@ -84,7 +85,7 @@ await new Command()
 			// args.push('-Donnxruntime_USE_EXTERNAL_DAWN=OFF');
 			// args.push('-Donnxruntime_BUILD_DAWN_MONOLITHIC_LIBRARY=ON');
 		}
-		if ((platform === 'win32' || platform === 'linux') && options.openvino) {
+		if (options.openvino && (platform === 'win32' || platform === 'linux')) {
 			// OpenVINO probably not available on macOS: https://github.com/microsoft/onnxruntime/issues/24273
 			args.push('-Donnxruntime_USE_OPENVINO=ON');
 			args.push('-Donnxruntime_USE_OPENVINO_GPU=ON');
@@ -123,6 +124,10 @@ await new Command()
 			args.push(`-DABSL_MSVC_STATIC_RUNTIME=${options.mt ? 'ON' : 'OFF'}`);
 		}
 
+		if (!options.static) {
+			args.push('-Donnxruntime_BUILD_SHARED_LIB=ON');
+		}
+
 		// https://github.com/microsoft/onnxruntime/pull/21005
 		if (platform === 'win32') {
 			compilerFlags.push('_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR');
@@ -141,7 +146,7 @@ await new Command()
 			args.push('-G', 'Ninja');
 		}
 
-		const sourceDir = join(root, 'src', 'static-build');
+		const sourceDir = options.static ? join(root, 'src', 'static-build') : 'cmake';
 		const artifactOutDir = join(root, 'artifact', 'onnxruntime');
 
 		await $`cmake -S ${sourceDir} -B build -D CMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release -DCMAKE_INSTALL_PREFIX=${artifactOutDir} -DONNXRUNTIME_SOURCE_DIR=${onnxruntimeRoot} --compile-no-warning-as-error ${args}`;

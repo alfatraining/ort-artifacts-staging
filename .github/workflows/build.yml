@@ -4,7 +4,7 @@ on:
     inputs:
       onnxruntime-ref:
         type: string
-        description: "ONNX Runtime repository reference, e.g., 'rel-1.22.0' or 'main'"
+        description: "ONNX Runtime repository reference, e.g., 'rel-1.22.1' or 'main'"
         default: main
 env:
   GCC_VERSION: '11'
@@ -21,28 +21,53 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: aarch64-unknown-linux-gnu
+          - target: dylib-aarch64-unknown-linux-gnu
             args: "-A aarch64 --xnnpack -N"
             runs-on: ubuntu-22.04
             arch: "arm64" # Defined again for OpenVINO setup.
             release: "ubuntu20" # Defined for OpenVINO setup.
-          - target: x86_64-unknown-linux-gnu
+          - target: static-aarch64-unknown-linux-gnu
+            args: "--static -A aarch64 --xnnpack -N"
+            runs-on: ubuntu-22.04
+            arch: "arm64"
+            release: "ubuntu20"
+          - target: dylib-x86_64-unknown-linux-gnu
             args: "--xnnpack -N"
             runs-on: ubuntu-22.04
             arch: "x86_64"
-          - target: aarch64-apple-darwin
+          - target: static-x86_64-unknown-linux-gnu
+            args: "--static --xnnpack -N"
+            runs-on: ubuntu-22.04
+            arch: "x86_64"
+          - target: dylib-aarch64-apple-darwin
             args: "-A aarch64 --xnnpack -N" # CoreML requires macOS 13 or newer.
             runs-on: macos-13
             arch: "arm64"
-          - target: x86_64-apple-darwin
-            args: "--xnnpack -N" # CoreML requires macOS 13 or newer.
+          - target: static-aarch64-apple-darwin
+            args: "--static -A aarch64 --xnnpack -N"
+            runs-on: macos-13
+            arch: "arm64"
+          - target: dylib-x86_64-apple-darwin
+            args: "--xnnpack -N"
             runs-on: macos-13
             arch: "x86_64"
-          - target: x86_64-pc-windows-msvc-md
+          - target: static-x86_64-apple-darwin
+            args: "--static --xnnpack -N"
+            runs-on: macos-13
+            arch: "x86_64"
+          - target: dylib-x86_64-pc-windows-msvc-md
             args: "--directml --xnnpack"
             runs-on: windows-2025
             arch: "x86_64"
-          - target: x86_64-pc-windows-msvc-mt
+          - target: static-x86_64-pc-windows-msvc-md
+            args: "--directml --xnnpack"
+            runs-on: windows-2025
+            arch: "x86_64"
+          - target: dylib-x86_64-pc-windows-msvc-mt
+            args: "--mt --directml --xnnpack"
+            runs-on: windows-2025
+            arch: "x86_64"
+          - target: static-x86_64-pc-windows-msvc-mt
             args: "--mt --directml --xnnpack"
             runs-on: windows-2025
             arch: "x86_64"
