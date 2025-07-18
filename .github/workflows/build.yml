@@ -106,8 +106,8 @@ jobs:
         if: matrix.target == 'dylib-x86_64-unknown-linux-gnu' || matrix.target == 'dylib-aarch64-unknown-linux-gnu'
         run: |
           sudo apt-get update
-          sudo apt-get install -y execstack
-          execstack -c artifact/onnxruntime/lib/libonnxruntime_sx.so
+          sudo apt-get install -y patchelf
+          patchelf --clear-execstack artifact/onnxruntime/lib/libonnxruntime_sx.so
       - uses: actions/upload-artifact@v4
         with:
           name: ort-${{ inputs.onnxruntime-ref }}-${{ matrix.target }}
