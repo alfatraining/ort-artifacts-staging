@@ -23,21 +23,21 @@ jobs:
         include:
           - target: dylib-aarch64-unknown-linux-gnu
             args: "-A aarch64 --xnnpack -N"
-            runs-on: ubuntu-22.04
+            runs-on: ubuntu-24.04
             arch: "arm64" # Defined again for OpenVINO setup.
             release: "ubuntu20" # Defined for OpenVINO setup.
           - target: static-aarch64-unknown-linux-gnu
             args: "--static -A aarch64 --xnnpack -N"
-            runs-on: ubuntu-22.04
+            runs-on: ubuntu-24.04
             arch: "arm64"
             release: "ubuntu20"
           - target: dylib-x86_64-unknown-linux-gnu
             args: "--xnnpack -N"
-            runs-on: ubuntu-22.04
+            runs-on: ubuntu-24.04
             arch: "x86_64"
           - target: static-x86_64-unknown-linux-gnu
             args: "--static --xnnpack -N"
-            runs-on: ubuntu-22.04
+            runs-on: ubuntu-24.04
             arch: "x86_64"
           - target: dylib-aarch64-apple-darwin
             args: "-A aarch64 --xnnpack -N" # CoreML requires macOS 13 or newer.
@@ -73,7 +73,7 @@ jobs:
             arch: "x86_64"
           - target: wasm32-unknown-emscripten
             args: "-W --webgpu"
-            runs-on: ubuntu-22.04
+            runs-on: ubuntu-24.04
             arch: "wasm32"
     steps:
       - name: Install cross-compile tools
