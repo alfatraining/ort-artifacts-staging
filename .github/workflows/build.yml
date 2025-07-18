@@ -89,12 +89,13 @@ jobs:
           sudo docker image prune --all --force
       - uses: actions/checkout@v4
       - uses: seanmiddleditch/gha-setup-ninja@v6
-      - uses: abrown/install-openvino-action@v9
-        if: matrix.arch == 'x86_64' || matrix.arch == 'arm64'
-        with:
-          version: "2024.5"
-          arch: ${{ matrix.arch }}
-          release: ${{ matrix.release }}
+      # Following does not yet work on Ubuntu 24.04!
+      # - uses: abrown/install-openvino-action@v9
+      #   if: matrix.arch == 'x86_64' || matrix.arch == 'arm64'
+      #   with:
+      #     version: "2024.5"
+      #     arch: ${{ matrix.arch }}
+      #     release: ${{ matrix.release }}
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
