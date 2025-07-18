@@ -101,6 +101,12 @@ jobs:
       - name: Run builder
         run:
           deno run -A src/build.ts -r ${{ inputs.onnxruntime-ref }} ${{ matrix.args }}
+      - name: Remove executable stack flag
+        if: matrix.target == 'dylib-x86_64-unknown-linux-gnu' || matrix.target == 'dylib-aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y execstack
+          execstack -c artifact/onnxruntime/lib/libonnxruntime_sx.so
       - uses: actions/upload-artifact@v4
         with:
           name: ort-${{ inputs.onnxruntime-ref }}-${{ matrix.target }}
