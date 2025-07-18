@@ -68,7 +68,7 @@ jobs:
             runs-on: windows-2025
             arch: "x86_64"
           - target: static-x86_64-pc-windows-msvc-mt
-            args: "--static -mt --directml --xnnpack"
+            args: "--static --mt --directml --xnnpack"
             runs-on: windows-2025
             arch: "x86_64"
           - target: wasm32-unknown-emscripten
