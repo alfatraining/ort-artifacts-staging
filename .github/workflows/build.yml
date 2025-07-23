@@ -22,53 +22,53 @@ jobs:
       matrix:
         include:
           - target: dylib-aarch64-unknown-linux-gnu
-            args: "-A aarch64 --xnnpack -N"
+            args: "-A aarch64 --xnnpack --webgpu -N"
             runs-on: ubuntu-24.04
             arch: "arm64" # Defined again for OpenVINO setup.
             release: "ubuntu20" # Defined for OpenVINO setup.
           - target: static-aarch64-unknown-linux-gnu
-            args: "--static -A aarch64 --xnnpack -N"
+            args: "--static -A aarch64 --xnnpack --webgpu -N"
             runs-on: ubuntu-24.04
             arch: "arm64"
             release: "ubuntu20"
           - target: dylib-x86_64-unknown-linux-gnu
-            args: "--xnnpack -N"
+            args: "--xnnpack --webgpu -N"
             runs-on: ubuntu-24.04
             arch: "x86_64"
           - target: static-x86_64-unknown-linux-gnu
-            args: "--static --xnnpack -N"
+            args: "--static --xnnpack --webgpu -N"
             runs-on: ubuntu-24.04
             arch: "x86_64"
           - target: dylib-aarch64-apple-darwin
-            args: "-A aarch64 --xnnpack -N" # CoreML requires macOS 13 or newer.
+            args: "-A aarch64 --xnnpack --webgpu -N" # CoreML requires macOS 13 or newer.
             runs-on: macos-13
             arch: "arm64"
           - target: static-aarch64-apple-darwin
-            args: "--static -A aarch64 --xnnpack -N"
+            args: "--static -A aarch64 --xnnpack --webgpu -N"
             runs-on: macos-13
             arch: "arm64"
           - target: dylib-x86_64-apple-darwin
-            args: "--xnnpack -N"
+            args: "--xnnpack --webgpu -N"
             runs-on: macos-13
             arch: "x86_64"
           - target: static-x86_64-apple-darwin
-            args: "--static --xnnpack -N"
+            args: "--static --xnnpack --webgpu -N"
             runs-on: macos-13
             arch: "x86_64"
           - target: dylib-x86_64-pc-windows-msvc-md
-            args: "--directml --xnnpack"
+            args: "--directml --xnnpack --webgpu"
             runs-on: windows-2025
             arch: "x86_64"
           - target: static-x86_64-pc-windows-msvc-md
-            args: "--static --directml --xnnpack"
+            args: "--static --directml --xnnpack --webgpu"
             runs-on: windows-2025
             arch: "x86_64"
           - target: dylib-x86_64-pc-windows-msvc-mt
-            args: "--mt --directml --xnnpack"
+            args: "--mt --directml --xnnpack --webgpu"
             runs-on: windows-2025
             arch: "x86_64"
           - target: static-x86_64-pc-windows-msvc-mt
-            args: "--static --mt --directml --xnnpack"
+            args: "--static --mt --directml --xnnpack --webgpu"
             runs-on: windows-2025
             arch: "x86_64"
           - target: wasm32-unknown-emscripten
