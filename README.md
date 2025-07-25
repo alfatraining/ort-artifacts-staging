@@ -7,7 +7,6 @@ ToDo:
 - Builds for iOS.
 - Custom CMake build of Emscripten.
 - Add NPU-based execution providers (QNN?, Intel OpenVINO?, ...).
-- Rename project?
 - Option to compile WebGPU ep with Vulkan backend under Windows?
 
 Changes from [pykeio/ort-artifacts](https://github.com/pykeio/ort-artifacts) should be reviewed and merged into this fork.
