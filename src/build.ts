@@ -76,6 +76,7 @@ await new Command()
 		const args = [];
 
 		if (platform === 'darwin') {
+			args.push('-Dprotobuf_BUILD_PROTOC_BINARIES=OFF');
 			args.push(`-DCMAKE_OSX_DEPLOYMENT_TARGET=${options.iphoneos || options.iphonesimulator ? IPHONE_DEPLOYMENT_TARGET : MACOS_DEPLOYMENT_TARGET}`);
 			if(options.iphoneos) {
 				args.push('-DCMAKE_OSX_SYSROOT=iphoneos');
