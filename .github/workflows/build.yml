@@ -12,7 +12,6 @@ env:
   PYTHON_VERSION: '3.10'
   NODE_VERSION: '18'
   XCODE_VERSION: '14.3.1'
-  MACOSX_DEPLOYMENT_TARGET: '12.0' # Should be 13.3 according to https://github.com/microsoft/onnxruntime/releases/tag/v1.21.0. But due to internal constraints, we must target 12.
 jobs:
   build:
     name: Build
@@ -39,19 +38,19 @@ jobs:
             args: "--static --xnnpack --webgpu -N"
             runs-on: ubuntu-24.04
             arch: "x86_64"
-          - target: dylib-aarch64-apple-darwin
+          - target: dylib-aarch64-macos-darwin
             args: "-A aarch64 --xnnpack --webgpu -N" # CoreML requires macOS 13 or newer.
             runs-on: macos-13
             arch: "arm64"
-          - target: static-aarch64-apple-darwin
+          - target: static-aarch64-macos-darwin
             args: "--static -A aarch64 --xnnpack --webgpu -N"
             runs-on: macos-13
             arch: "arm64"
-          - target: dylib-x86_64-apple-darwin
+          - target: dylib-x86_64-macos-darwin
             args: "--xnnpack --webgpu -N"
             runs-on: macos-13
             arch: "x86_64"
-          - target: static-x86_64-apple-darwin
+          - target: static-x86_64-macos-darwin
             args: "--static --xnnpack --webgpu -N"
             runs-on: macos-13
             arch: "x86_64"
@@ -75,6 +74,22 @@ jobs:
             args: "-W --webgpu"
             runs-on: ubuntu-24.04
             arch: "wasm32"
+          - target: dylib-aarch64-ios-darwin
+            args: "-A aarch64 --iphoneos --xnnpack --coreml -N"
+            runs-on: macos-13
+            arch: "arm64"
+          - target: static-aarch64-ios-darwin
+            args: "--static --iphoneos -A aarch64 --xnnpack --coreml -N"
+            runs-on: macos-13
+            arch: "arm64"
+          - target: dylib-aarch64-ios-simulator-darwin
+            args: "-A aarch64 --iphonesimulator --xnnpack --coreml -N"
+            runs-on: macos-13
+            arch: "arm64"
+          - target: static-aarch64-ios-simulator-darwin
+            args: "--static --iphonesimulator -A aarch64 --xnnpack --coreml -N"
+            runs-on: macos-13
+            arch: "arm64"
     steps:
       - name: Install cross-compile tools
         if: matrix.target == 'dylib-aarch64-unknown-linux-gnu' || matrix.target == 'static-aarch64-unknown-linux-gnu'

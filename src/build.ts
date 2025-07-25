@@ -11,6 +11,9 @@ const platform: 'win32' | 'darwin' | 'linux' = getPlatform();
 
 const TARGET_ARCHITECTURE_TYPE = new EnumType(['x86_64', 'aarch64']);
 
+const MACOS_DEPLOYMENT_TARGET = 12.0; // Should be 13.3 according to https://github.com/microsoft/onnxruntime/releases/tag/v1.21.0. But due to internal constraints, we must target 12.
+const IPHONE_DEPLOYMENT_TARGET = 16.0;
+
 await new Command()
 	.name('ort-artifact')
 	.version('0.1.0')
@@ -25,6 +28,8 @@ await new Command()
 	.option('--openvino', 'Enable OpenVINO EP')
 	.option('-N, --ninja', 'build with ninja')
 	.option('-A, --arch <arch:target-arch>', 'Configure target architecture for cross-compile', { default: 'x86_64' })
+	.option('--iphoneos', 'Target iOS / iPadOS')
+	.option('--iphonesimulator', 'Target iOS / iPadOS simulator')
 	.option('-W, --wasm', 'Compile for WebAssembly (with patches)')
 	.option('--emsdk <version:string>', 'Emsdk version to use for WebAssembly build', { default: '4.0.3' })
 	.action(async (options, ..._) => {
@@ -69,6 +74,18 @@ await new Command()
 
 		const compilerFlags = [];
 		const args = [];
+
+		if (platform === 'darwin') {
+			args.push(`-DCMAKE_OSX_DEPLOYMENT_TARGET=${options.iphoneos || options.iphonesimulator ? IPHONE_DEPLOYMENT_TARGET : MACOS_DEPLOYMENT_TARGET}`);
+			if(options.iphoneos) {
+				args.push('-DCMAKE_OSX_SYSROOT=iphoneos');
+			} else if(options.iphonesimulator) {
+				args.push('-DCMAKE_OSX_SYSROOT=iphonesimulator');
+			}
+			if(options.iphoneos || options.iphonesimulator) {
+				args.push('-DCMAKE_TOOLCHAIN_FILE=../cmake/onnxruntime_ios.toolchain.cmake');
+			}
+		}
 
 		if (platform === 'win32' && options.directml) {
 			args.push('-Donnxruntime_USE_DML=ON');
